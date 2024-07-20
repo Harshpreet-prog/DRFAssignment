@@ -1,0 +1,75 @@
+### Signup
+POST http://127.0.0.1:8000/signup 
+Content-Type: application/json
+
+{ "username": "kamal", "password": "Pass1234!", "email": "kamal@mail.com" }
+
+### Login
+POST http://127.0.0.1:8000/login 
+Content-Type: application/json
+
+{ "username": "s", "password": "Pass1234!" }
+
+### test token
+GET http://127.0.0.1:8000/test_token 
+Content-Type: application/json 
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
+
+
+### List all posts
+GET http://localhost:8000/posts/?page=1
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
+
+### Retrieve a specific post by ID
+GET http://localhost:8000/posts/5/
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
+
+### Create a new post
+POST http://localhost:8000/posts/
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+Content-Type: application/json
+
+{ "title": "My new amazing post again", "content": "Content of the new post" }
+
+### Update a specific post by ID
+PUT http://localhost:8000/posts/1/
+Authorization: Token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+Content-Type: application/json
+
+{
+  "title": "Updated Post Title",
+  "content": "Updated content of the post"
+}
+
+### Delete a specific post by ID
+DELETE http://localhost:8000/posts/1/
+Authorization: Token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
+
+
+
+### List all Commnents
+GET http://localhost:8000/comments/
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
+
+### List comments on a post by post's id 
+GET http://localhost:8000/comments/5/
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
+
+### Create a new comment on a post
+POST http://localhost:8000/comments/
+Authorization: token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+Content-Type: application/json
+
+{ "post": 5, "content": "a new comment from me" }
+
+
+### Delete a specific post by ID
+DELETE http://localhost:8000/comments/1/
+Authorization: Token ae3ce3b212740c772ede2ccdc4defca8ab6aac09
+
