@@ -3,16 +3,17 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 
 from .serializers import UserSerializer, PostSerializer, CommentSerializer
 from .models import Post, Comment
 
-# SIGNUP VIEW
+
 @api_view(['POST'])
 def signup(request):
     serializer = UserSerializer(data=request.data)
@@ -27,7 +28,6 @@ def signup(request):
     return Response(serializer.errors, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-# LOGIN VIEW
 @api_view(['POST'])
 def login(request):
     user = get_object_or_404(User, username=request.data['username'])
@@ -39,13 +39,29 @@ def login(request):
     return Response({'token': token.key })
 
 
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def test_token(request):
-    return Response("passed!")
 
-from rest_framework.pagination import PageNumberPagination
+class LikeView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    
+    def get(self, request, pk):
+        try:
+            post = Post.objects.get(pk=pk)
+            
+            return Response( { 'likes' : post.likes }, status=status.HTTP_200_OK)
+        except Post.DoesNotExist:
+            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    
+    def post(self, request):
+        try:
+            pk = request.data['pk']
+            post = Post.objects.get(pk=pk)
+            post.liking_users.add( request.user )
+            post.save()
+            return Response( { 'likes' : post.likes }, status=status.HTTP_201_CREATED)
+        
+        except Post.DoesNotExist:
+            return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class PostView(APIView):
@@ -63,10 +79,11 @@ class PostView(APIView):
         else:
             
             paginator = PageNumberPagination()
-            posts = paginator.paginate_queryset(Post.objects.all(), request)
-            serializer = PostSerializer(posts, many=True)
+            posts = Post.objects.all().order_by('-date_published')
+            posts_page = paginator.paginate_queryset(posts, request)
+
+            serializer = PostSerializer(posts_page, many=True)
             return paginator.get_paginated_response(serializer.data)
-            return Response(serializer.data, status=status.HTTP_200_OK)
 
 
     def post(self, request):
@@ -100,7 +117,6 @@ class PostView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
 class CommentView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -125,7 +141,7 @@ class CommentView(APIView):
             data=request.data
             post_id = data['post']
 
-            query = Post.objects.filter(id=post_id)
+            query = Post.objects.filter(pk=post_id)
             if not query.exists():
                 return Response({ "detail": "Post not Found" }, status=status.HTTP_404_NOT_FOUND)
            
@@ -148,3 +164,5 @@ class CommentView(APIView):
 
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
