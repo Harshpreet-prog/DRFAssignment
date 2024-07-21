@@ -1,11 +1,14 @@
-### Signup
+# for testing you can install rest client extenion in vscode and click on send request button
+# or use postman (for authentication in postman use oauth2 with 'token' as prefix)
+
+### Signup ( provides you a token )
 POST http://127.0.0.1:8000/signup/ 
 Content-Type: application/json
 
 { "username": "Test", "password": "Pass1234!", "email": "test@mail.com" }
 
 
-### Login
+### Login ( provides you a token )
 POST http://127.0.0.1:8000/login/ 
 Content-Type: application/json
 

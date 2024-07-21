@@ -11,14 +11,20 @@
 
 ### Steps
 
-1. ** Create a virtualenv next to cloned repo  :**
+
+1. ** Cd into Repo : **
+    
+    cd DRFAssignment
+
+
+2. ** Create a virtualenv   :**
 
     python -m venv venv
     or 
     python3 -m venv venv
 
 
-2. ** Activate virtualenv :**
+3. ** Activate virtualenv :**
 
     windows :
         source venv/Scripts/activate
@@ -26,12 +32,7 @@
         source venv/bin/activate
 
 
-3. ** Cd into Repo : **
-    
-    cd DRFAssignment
-
-
-4. ** install requirements : **
+4. ** Install requirements : **
     
     pip install -r requirements.txt
 
@@ -46,9 +47,14 @@
     python manage.py test
 
 
-7. ** Test API : **
+7. ** Run Server : **
+    
+    python manage.py runserver
 
-    Use test.rest file for api docs 
+
+8. ** Test API : **
+
+    Use test.rest file for api endpoints documentation 
 
 
 
